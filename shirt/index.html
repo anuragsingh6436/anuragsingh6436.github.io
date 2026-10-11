@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Sign my last day shirt 🖊️</title>
+<meta name="description" content="Last day of school! Sign your friend's white shirt with a sketch pen, right in your browser. No app, no login.">
+<meta property="og:title" content="Sign my last day shirt 🖊️">
+<meta property="og:description" content="Pick a sketch pen and write something before the last bell.">
+<meta name="theme-color" content="#2E4A3B">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shirt.css">
+</head>
+<body>
+<header class="wrap" style="padding-bottom:0"><div class="board"><h1 id="title">Sign my last day shirt 🖊️</h1><p id="sub"></p></div></header>
+<main class="wrap">
+  <section id="bad" class="card hidden">
+    <h2>Hmm, this link is incomplete</h2>
+    <p>Ask your friend to send their shirt link again (copy the whole message). Or make your own last day shirt:</p>
+    <a class="btn" id="play1" href="#">Get Last Day Shirt</a>
+  </section>
+
+  <section id="form" class="hidden">
+    <div class="desk"><canvas id="shirt" aria-label="Your friend's shirt with your signature preview" role="img"></canvas></div>
+
+    <label for="name">Your name</label>
+    <input id="name" maxlength="40" autocomplete="nickname" placeholder="Write your name">
+
+    <label for="msg">A last-day message <span class="counter" id="count">0/80</span></label>
+    <textarea id="msg" maxlength="120" placeholder="Something they will never forget"></textarea>
+    <div class="ideas" id="ideas"></div>
+
+    <label id="penlabel">Pick a sketch pen</label>
+    <div class="pens" id="pens" role="radiogroup" aria-labelledby="penlabel"></div>
+
+    <label>Doodle (optional)</label>
+    <div class="doodle">
+      <canvas id="pad" aria-label="Doodle pad, draw with your finger"></canvas>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button class="round" id="undo" aria-label="Undo last stroke">↶</button>
+        <button class="round" id="clear" aria-label="Clear doodle">✕</button>
+      </div>
+    </div>
+
+    <button class="btn" id="send" disabled>Send it back ✍️</button>
+    <p class="note">Your signature travels inside the link you send on WhatsApp. Nothing is uploaded or stored anywhere.</p>
+  </section>
+
+  <section id="sent" class="card hidden">
+    <h2>Sent! 🖊️</h2>
+    <p id="sentText">When your friend taps the link, your signature lands on their shirt.</p>
+    <div class="row">
+      <button class="btn paper" id="again">Send again</button>
+      <button class="btn paper" id="copy">Copy link</button>
+    </div>
+    <a class="btn" id="play2" href="#">Make my own last day shirt</a>
+  </section>
+
+  <p class="brand">Last Day Shirt · made with ❤️ by Bajrangi Games · <a href="https://anuragsingh6436.github.io/privacy-policy/lastdayshirt/">Privacy</a></p>
+</main>
+<script src="shirt.js"></script>
+<script>
+(function () {
+  'use strict';
+  var S = window.Shirt, $ = function (id) { return document.getElementById(id); };
+  $('play1').href = $('play2').href = S.PLAY;
+  var inv = S.decodeInvite(S.readHash());
+  if (!inv) { $('bad').classList.remove('hidden'); $('title').textContent = 'Last Day Shirt 🖊️'; return; }
+
+  var owner = S.firstName(inv.o);
+  $('title').textContent = 'Sign ' + owner + '’s last day shirt 🖊️';
+  $('sub').textContent = [inv.s, inv.c].filter(Boolean).join(' · ');
+  $('send').textContent = 'Send it back to ' + owner + ' ✍️';
+  $('form').classList.remove('hidden');
+
+  var state = { pen: 1, strokes: [], current: null, link: null };
+  var ideas = ['Never change! 💙', 'Best bench partner ever', 'Stay in touch 📞', 'Miss you already', 'Friends forever ✌️', 'Don’t forget me!', 'Topper ban jaana 🤓', 'Canteen samosa party soon'];
+  ideas.forEach(function (t) {
+    var b = document.createElement('button'); b.type = 'button'; b.textContent = t;
+    b.onclick = function () { $('msg').value = t; update(); };
+    $('ideas').appendChild(b);
+  });
+  S.PENS.forEach(function (c, i) {
+    var b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'radio');
+    b.setAttribute('aria-label', S.PEN_NAMES[i] + ' pen'); b.setAttribute('aria-checked', i === state.pen ? 'true' : 'false');
+    var sp = document.createElement('span'); sp.style.setProperty('--c', c); b.appendChild(sp);
+    b.onclick = function () {
+      state.pen = i;
+      Array.prototype.forEach.call($('pens').children, function (x, k) { x.setAttribute('aria-checked', k === i ? 'true' : 'false'); });
+      drawPad(); update();
+    };
+    $('pens').appendChild(b);
+  });
+
+  function sig() {
+    return { k: inv.k, o: inv.o, n: S.cleanLine($('name').value, S.LIMITS.NAME), m: S.cleanLine($('msg').value, S.LIMITS.MESSAGE), p: state.pen, d: state.strokes };
+  }
+  function update() {
+    var m = $('msg').value;
+    if (Array.from(m).length > S.LIMITS.MESSAGE) { $('msg').value = Array.from(m).slice(0, S.LIMITS.MESSAGE).join(''); }
+    $('count').textContent = Array.from($('msg').value).length + '/' + S.LIMITS.MESSAGE;
+    var s = sig();
+    $('send').disabled = !s.n;
+    S.paint($('shirt'), function (c) {
+      var preview = s.n ? [{ n: s.n, m: s.m, p: s.p, d: s.d, x: 0.3, y: 0.62, r: -4, sc: 1.05 }] : [];
+      S.drawShirt(c, { side: 'front', school: inv.s, signatures: preview });
+    });
+  }
+  $('name').addEventListener('input', update);
+  $('msg').addEventListener('input', update);
+
+  // Doodle pad (pointer events: finger, pen or mouse).
+  var pad = $('pad');
+  function drawPad() {
+    var dpr = window.devicePixelRatio || 1, r = pad.getBoundingClientRect();
+    pad.width = Math.round(r.width * dpr); pad.height = Math.round(r.height * dpr);
+    var c = pad.getContext('2d'); c.lineCap = 'round'; c.lineJoin = 'round';
+    c.strokeStyle = c.fillStyle = S.PENS[state.pen]; c.lineWidth = pad.width * 0.022;
+    state.strokes.concat(state.current ? [state.current] : []).forEach(function (st) {
+      if (st.length < 4) { c.beginPath(); c.arc(st[0] * pad.width, st[1] * pad.height, pad.width * 0.016, 0, 7); c.fill(); return; }
+      c.beginPath(); c.moveTo(st[0] * pad.width, st[1] * pad.height);
+      for (var i = 2; i + 1 < st.length; i += 2) c.lineTo(st[i] * pad.width, st[i + 1] * pad.height);
+      c.stroke();
+    });
+  }
+  function totalPoints() { return state.strokes.reduce(function (a, s) { return a + s.length / 2; }, 0); }
+  function pos(e) { var r = pad.getBoundingClientRect(); return [Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)), Math.max(0, Math.min(1, (e.clientY - r.top) / r.height))]; }
+  pad.addEventListener('pointerdown', function (e) {
+    if (state.strokes.length >= S.LIMITS.STROKES || totalPoints() >= S.LIMITS.POINTS) return;
+    e.preventDefault(); pad.setPointerCapture(e.pointerId); state.current = pos(e); drawPad();
+  });
+  pad.addEventListener('pointermove', function (e) {
+    if (!state.current) return;
+    var p = pos(e), c = state.current, lx = c[c.length - 2], ly = c[c.length - 1];
+    if ((p[0] - lx) * (p[0] - lx) + (p[1] - ly) * (p[1] - ly) > 0.0001 && totalPoints() + c.length / 2 < S.LIMITS.POINTS) { c.push(p[0], p[1]); drawPad(); }
+  });
+  function end() { if (!state.current) return; state.strokes.push(S.simplify(state.current, 0.022)); state.current = null; drawPad(); update(); }
+  pad.addEventListener('pointerup', end); pad.addEventListener('pointercancel', end);
+  $('undo').onclick = function () { state.strokes.pop(); drawPad(); update(); };
+  $('clear').onclick = function () { state.strokes = []; drawPad(); update(); };
+
+  function message(link) {
+    return S.cleanLine($('name').value, S.LIMITS.NAME) + ' signed your last day shirt, ' + owner + '! 🖊️ Tap to see it on your shirt:\n' + link;
+  }
+  function share(link) { window.location.href = 'https://wa.me/?text=' + encodeURIComponent(message(link)); }
+  $('send').onclick = function () {
+    var s = sig(); if (!s.n) return;
+    state.link = S.signatureLink(s);
+    $('form').classList.add('hidden'); $('sent').classList.remove('hidden');
+    $('sentText').textContent = 'When ' + owner + ' taps the link, your signature lands on their shirt. Didn’t go through? Send it again or copy the link.';
+    share(state.link);
+  };
+  $('again').onclick = function () { if (state.link) share(state.link); };
+  $('copy').onclick = function () {
+    if (!state.link) return;
+    var t = message(state.link);
+    if (navigator.clipboard) navigator.clipboard.writeText(t).then(function () { $('copy').textContent = 'Copied ✓'; }, function () {});
+  };
+
+  window.addEventListener('resize', function () { drawPad(); update(); });
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(function () { drawPad(); update(); });
+  drawPad(); update();
+})();
+</script>
+</body>
+</html>

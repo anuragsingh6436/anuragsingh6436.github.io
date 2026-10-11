@@ -1,0 +1,90 @@
+/* Inland Letter web page: same look as the app (sepia desk, pale-blue inland paper, red post box). */
+:root {
+  --desk: #F4EAD8; --desk-deep: #E7D5B5; --ink: #3B2A1A; --muted: #6B5440;
+  --red: #B0261E; --red-dark: #7C1913; --print: #2D5683; --cream: #FBF5EA; --stamp: #5B3A8E;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; min-height: 100%; }
+body {
+  background: radial-gradient(ellipse at 50% 40%, var(--desk) 55%, #E3CDA6 100%) fixed, var(--desk);
+  color: var(--ink); font-family: Poppins, system-ui, sans-serif; line-height: 1.5;
+  -webkit-tap-highlight-color: transparent;
+}
+#app { max-width: 480px; margin: 0 auto; padding: 12px 16px calc(24px + env(safe-area-inset-bottom)); min-height: 100vh; display: flex; flex-direction: column; }
+.brand { display: flex; align-items: baseline; gap: 10px; padding: 6px 0 10px; }
+.brand-name { font-family: Caveat, cursive; font-weight: 700; font-size: 32px; }
+.brand-sub { color: var(--muted); font-size: 12px; letter-spacing: 1px; text-transform: uppercase; }
+.view { flex: 1; }
+.hand { font-family: Caveat, cursive; font-weight: 700; }
+h1.hand { font-size: 38px; line-height: 1.05; margin: 6px 0 8px; }
+h2.hand { font-size: 32px; margin: 8px 0; }
+.card { background: var(--cream); border: 1px solid rgba(59,42,26,.12); border-radius: 16px; padding: 16px; box-shadow: 0 3px 10px rgba(88,58,26,.12); }
+.center { text-align: center; }
+.hero { display: flex; gap: 14px; align-items: center; }
+.postbox { width: 84px; height: 150px; flex: none; }
+.btn {
+  display: block; width: 100%; min-height: 48px; margin: 10px 0 0; padding: 12px 16px; border-radius: 14px;
+  border: 1px solid rgba(59,42,26,.35); background: var(--cream); color: var(--ink);
+  font: 500 15px Poppins, sans-serif; text-align: center; text-decoration: none; cursor: pointer;
+  transition: transform .12s ease;
+}
+.btn:active { transform: scale(.97); }
+.btn.primary { background: linear-gradient(var(--red), var(--red-dark)); color: #fff; border: 0; font-weight: 700; box-shadow: 0 4px 10px rgba(124,25,19,.3); }
+.btn.big { font-size: 18px; padding: 16px; }
+.btn:focus-visible, .sealed:focus-visible { outline: 3px solid var(--print); outline-offset: 3px; }
+.gate { text-align: center; padding-top: 18vh; }
+.kicker { color: var(--stamp); font-weight: 700; letter-spacing: 2px; text-transform: uppercase; font-size: 13px; margin: 0; }
+.tiny { color: var(--muted); font-size: 12px; }
+.stage { position: relative; width: 100%; margin-top: 8px; }
+.dakiya { position: absolute; left: 0; bottom: -10px; width: 170px; height: 140px; pointer-events: none; z-index: 5; }
+.sealed { position: relative; margin: 0 auto; cursor: pointer; transition: transform .2s ease; }
+.sealed canvas { display: block; }
+.sealed.drop { animation: drop .9s cubic-bezier(.3,1.5,.5,1) both; }
+@keyframes drop { from { transform: translateY(-120vh) rotate(-6deg); } to { transform: translateY(0) rotate(1.5deg); } }
+.sealed.rest { transform: rotate(1.5deg); }
+.hint { text-align: center; font-size: 26px; color: var(--muted); margin: 12px 0 0; animation: breathe 2.2s ease-in-out infinite; }
+@keyframes breathe { 50% { opacity: .5; } }
+.lock { text-align: center; }
+.countdown { font-size: 36px; font-weight: 700; color: var(--stamp); margin: 0; font-variant-numeric: tabular-nums; }
+.fold { position: relative; margin: 0 auto; perspective: 1400px; }
+.panel { position: absolute; left: 0; width: 100%; transform-style: preserve-3d; will-change: transform; }
+.face { position: absolute; inset: 0; overflow: hidden; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.face.back { transform: rotateX(180deg); }
+.card3d { position: absolute; inset: 0; transform-style: preserve-3d; }
+.card3d .face.back { transform: rotateY(180deg); }
+.sheet { position: absolute; left: 0; top: 0; background-size: 100% 100%; box-shadow: 0 6px 16px rgba(60,40,20,.25); }
+.sheet .in { position: absolute; inset: 0; display: flex; flex-direction: column; }
+.sheet .hdr { text-align: center; font-family: Georgia, 'Noto Serif', serif; }
+.sheet .hdr b { display: block; letter-spacing: 2px; }
+.sheet .date { text-align: right; font-family: Caveat, cursive; font-weight: 700; opacity: .85; }
+.sheet .greet, .sheet .body, .sheet .close, .sheet .from { font-family: Caveat, cursive; font-weight: 700; }
+.sheet .body { flex: 1; white-space: pre-wrap; overflow: hidden; word-wrap: break-word; transform: rotate(-.4deg); }
+.sheet .close, .sheet .from { text-align: right; }
+.sheet .edge { position: absolute; left: 0; right: 0; bottom: 1px; text-align: center; font-family: Georgia, serif; opacity: .7; }
+.actions { margin-top: 14px; text-align: center; }
+.form label { display: block; font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-top: 10px; }
+.form input, .form textarea {
+  display: block; width: 100%; margin-top: 4px; padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(59,42,26,.3);
+  background: #DCE9F5; color: #1C3C8C; font: 700 22px Caveat, cursive; text-transform: none; letter-spacing: 0;
+}
+.form textarea { resize: vertical; min-height: 220px; line-height: 1.2; }
+.row { display: flex; gap: 10px; }
+.row label { flex: 1; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.chip { min-height: 40px; padding: 6px 12px; border-radius: 20px; border: 1px solid rgba(59,42,26,.25); background: #fffbf2; font: 500 14px Poppins, sans-serif; color: var(--ink); cursor: pointer; }
+.counter { text-align: right; font-size: 12px; color: var(--muted); margin: 4px 0 0; }
+.inks { border: 0; padding: 0; margin: 12px 0 0; display: flex; gap: 14px; flex-wrap: wrap; }
+.inks legend { font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; padding: 0; }
+.inks label { display: flex; align-items: center; gap: 6px; text-transform: none; letter-spacing: 0; font-weight: 500; font-size: 14px; color: var(--ink); min-height: 44px; margin: 0; }
+.inks input { width: auto; margin: 0; }
+.well { width: 22px; height: 22px; border-radius: 50%; display: inline-block; }
+.error { color: var(--red); font-weight: 500; }
+footer { text-align: center; font-size: 12px; color: var(--muted); padding: 20px 0 4px; }
+footer a { color: var(--print); }
+.noscript { text-align: center; padding: 40px; }
+@media (prefers-reduced-motion: reduce) {
+  .sealed.drop { animation: none; }
+  .hint { animation: none; }
+  .btn { transition: none; }
+}

@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>A signature for your last day shirt 🖊️</title>
+<meta name="description" content="A friend signed your last day shirt. Open it in the Last Day Shirt app.">
+<meta property="og:title" content="I signed your last day shirt 🖊️">
+<meta name="theme-color" content="#2E4A3B">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shirt.css">
+</head>
+<body>
+<header class="wrap" style="padding-bottom:0"><div class="board"><h1 id="title">A signature for your shirt 🖊️</h1><p id="sub"></p></div></header>
+<main class="wrap">
+  <section id="bad" class="card hidden">
+    <h2>Hmm, this link is incomplete</h2>
+    <p>Ask your friend to send it again (the whole message). Or make your own last day shirt:</p>
+  </section>
+
+  <section id="ok" class="hidden">
+    <div class="desk"><canvas id="shirt" role="img" aria-label="The signature on a white school shirt"></canvas></div>
+    <div class="card">
+      <h2>Put it on your shirt</h2>
+      <p>Have the <b>Last Day Shirt</b> app? Tap the link in WhatsApp and it opens the app, where the signature lands on your shirt. If it opened here instead, copy the link, open the app and tap <b>Paste a signature</b>.</p>
+      <button class="btn paper" id="copy">Copy link</button>
+    </div>
+  </section>
+  <a class="btn" id="play" href="#">Get Last Day Shirt (free)</a>
+  <p class="brand">Last Day Shirt · made with ❤️ by Bajrangi Games · <a href="https://anuragsingh6436.github.io/privacy-policy/lastdayshirt/">Privacy</a></p>
+</main>
+<script src="../shirt.js"></script>
+<script>
+(function () {
+  'use strict';
+  var S = window.Shirt, $ = function (id) { return document.getElementById(id); };
+  $('play').href = S.PLAY;
+  var sig = S.decodeSignature(S.readHash());
+  if (!sig) { $('bad').classList.remove('hidden'); return; }
+  $('ok').classList.remove('hidden');
+  $('title').textContent = sig.n + ' signed ' + (sig.o ? S.firstName(sig.o) + '’s' : 'your') + ' shirt 🖊️';
+  $('sub').textContent = sig.m ? '“' + sig.m + '”' : '';
+  function draw() {
+    S.paint($('shirt'), function (c) {
+      S.drawShirt(c, { side: 'front', signatures: [{ n: sig.n, m: sig.m, p: sig.p, d: sig.d, x: 0.3, y: 0.6, r: -5, sc: 1.15 }] });
+    });
+  }
+  $('copy').onclick = function () {
+    if (navigator.clipboard) navigator.clipboard.writeText(location.href).then(function () { $('copy').textContent = 'Copied ✓'; }, function () {});
+  };
+  window.addEventListener('resize', draw);
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(draw);
+  draw();
+})();
+</script>
+</body>
+</html>

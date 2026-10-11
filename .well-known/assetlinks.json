@@ -1,0 +1,22 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.bajrangi.lastdayshirt",
+      "sha256_cert_fingerprints": [
+        "7B:BD:86:14:EE:09:A9:90:6B:A6:42:C4:AD:1E:D5:F2:41:5E:2E:81:66:D6:AF:36:FA:84:FE:1A:DB:81:31:9F"
+      ]
+    }
+  },
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.bajrangi.inlandletter",
+      "sha256_cert_fingerprints": [
+        "7B:BD:86:14:EE:09:A9:90:6B:A6:42:C4:AD:1E:D5:F2:41:5E:2E:81:66:D6:AF:36:FA:84:FE:1A:DB:81:31:9F"
+      ]
+    }
+  }
+]

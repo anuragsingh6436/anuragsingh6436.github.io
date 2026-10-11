@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>📮 You've got a letter · Inland Letter</title>
+  <meta name="description" content="Someone wrote you an inland letter, by hand, like the old days. Tap to open it.">
+  <meta property="og:title" content="📮 You've got a letter">
+  <meta property="og:description" content="Someone wrote you an inland letter, like the old days. Tap to open it.">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#F4EAD8">
+  <!-- The letter lives in the #fragment of this URL: it is never sent to any server. -->
+  <meta name="referrer" content="no-referrer">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="letter.css">
+</head>
+<body>
+  <main id="app">
+    <header class="brand">
+      <span class="brand-name">Inland Letter</span>
+      <span class="brand-sub">Chitthi Likho · Dak Ghar</span>
+    </header>
+
+    <!-- No letter in the link: a small welcome -->
+    <section id="home" class="view" hidden>
+      <div class="card hero">
+        <canvas id="homeBox" class="postbox" aria-hidden="true"></canvas>
+        <div>
+          <h1 class="hand">Write to someone you miss</h1>
+          <p>Pale blue inland letters, fountain-pen ink, a fold in three and a rubber-stamp postmark. Like the letters our families wrote before phones.</p>
+          <a class="btn primary" id="homePlay" href="#" rel="noopener">Get the app</a>
+          <button class="btn" id="homeWrite" type="button">Write a letter here</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- A letter arrived: the knock on the door (also unlocks sound on the first tap) -->
+    <section id="gate" class="view" hidden>
+      <div class="gate">
+        <p class="kicker">Tring tring!</p>
+        <h1 class="hand" id="gateTitle">Dakiya is here!</h1>
+        <p id="gateSub">There is a letter for you.</p>
+        <button class="btn primary big" id="receive" type="button">Receive the letter 📮</button>
+        <p class="tiny">Sound on for the full experience.</p>
+      </div>
+    </section>
+
+    <!-- The sealed letter, the countdown, the unfolding and reading -->
+    <section id="stage" class="view" hidden>
+      <div class="stage" id="stageBox">
+        <canvas id="dakiya" class="dakiya" aria-hidden="true"></canvas>
+        <div id="sealed" class="sealed" role="button" tabindex="0" aria-label="Sealed letter. Tap to open.">
+          <canvas id="sealedCanvas"></canvas>
+        </div>
+        <div id="fold" class="fold" hidden></div>
+      </div>
+      <p id="hint" class="hint hand" hidden>Tap to open</p>
+      <div id="lock" class="lock" hidden>
+        <p id="lockWhen">Sealed until tomorrow morning</p>
+        <p id="countdown" class="countdown" aria-live="polite">00:00:00</p>
+        <p class="tiny">No peeking! It opens by itself when the time comes.</p>
+      </div>
+      <div id="readActions" class="actions" hidden>
+        <a class="btn primary" id="replyApp" href="#" rel="noopener">Write a reply in the app</a>
+        <button class="btn" id="replyWeb" type="button">Reply right here</button>
+        <p class="tiny">This letter lives only in this link. Bookmark it to read again.</p>
+      </div>
+    </section>
+
+    <!-- Write a letter / reply in the browser -->
+    <section id="compose" class="view" hidden>
+      <h2 class="hand" id="composeTitle">Write back</h2>
+      <form id="form" class="card form" autocomplete="off">
+        <div class="row">
+          <label>Salutation<input id="fSal" maxlength="20" placeholder="Priya"></label>
+          <label>To<input id="fTo" maxlength="24" placeholder="name"></label>
+        </div>
+        <div class="chips" id="salChips"></div>
+        <label>Your letter
+          <textarea id="fBody" maxlength="900" rows="9" placeholder="Start writing… how have you been?"></textarea>
+        </label>
+        <p class="counter"><span id="count">0</span> / 900</p>
+        <div class="row">
+          <label>Sign-off<input id="fClose" maxlength="24" placeholder="Tumhara"></label>
+          <label>Your name<input id="fFrom" maxlength="24" placeholder="your name"></label>
+        </div>
+        <div class="chips" id="closeChips"></div>
+        <label>Posted from<input id="fTown" maxlength="24" placeholder="Your town (shows on the postmark)"></label>
+        <fieldset class="inks"><legend>Ink</legend>
+          <label><input type="radio" name="ink" value="0" checked><span class="well" style="background:#1C3C8C"></span>Blue</label>
+          <label><input type="radio" name="ink" value="1"><span class="well" style="background:#1E1C22"></span>Black</label>
+          <label><input type="radio" name="ink" value="2"><span class="well" style="background:#2A3DB0"></span>Royal blue</label>
+        </fieldset>
+        <p id="formError" class="error" hidden>The letter is empty. Write a few lines first.</p>
+        <button class="btn primary" type="submit">Fold, seal &amp; post</button>
+      </form>
+    </section>
+
+    <!-- Your letter is posted: send the link -->
+    <section id="result" class="view" hidden>
+      <div class="stage" id="resultBox">
+        <div id="rfold" class="fold"></div>
+        <div id="rsealed" class="sealed" hidden><canvas id="rsealedCanvas"></canvas></div>
+      </div>
+      <div id="resultActions" class="actions" hidden>
+        <h2 class="hand">Posted! 📮</h2>
+        <p>Now send the link so your letter reaches them.</p>
+        <a class="btn primary" id="sendWa" href="#" target="_blank" rel="noopener">Send on WhatsApp</a>
+        <button class="btn" id="sendShare" type="button">Share…</button>
+        <button class="btn" id="sendCopy" type="button">Copy link</button>
+        <p id="copied" class="tiny" hidden>Link copied.</p>
+      </div>
+    </section>
+
+    <!-- Problems -->
+    <section id="torn" class="view" hidden>
+      <div class="card center">
+        <h1 class="hand">A torn letter</h1>
+        <p id="tornText">This letter couldn't be read. The link may be cut short. Ask the sender to share it again.</p>
+        <a class="btn primary play" href="#" rel="noopener">Get Inland Letter</a>
+      </div>
+    </section>
+
+    <footer>
+      <a href="https://anuragsingh6436.github.io/privacy-policy/inlandletter/">Privacy</a> ·
+      Made in India by <a href="https://anuragsingh6436.github.io/">Bajrangi Games</a>
+    </footer>
+  </main>
+  <noscript><p class="noscript">Please turn on JavaScript to open your letter.</p></noscript>
+  <script src="codec.js"></script>
+  <script src="art.js"></script>
+  <script src="letter.js"></script>
+</body>
+</html>
